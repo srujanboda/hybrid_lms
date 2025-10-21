@@ -1,5 +1,8 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
+from django.utils import timezone
+from datetime import timedelta
+import random
 
 class UserManager(BaseUserManager):
     def create_user(self, email, name, password=None, **extra_fields):
@@ -25,6 +28,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
+    otp_code = models.CharField(max_length=6, blank=True, null=True)
+    otp_expiry = models.DateTimeField(blank=True, null=True)
+
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
@@ -32,3 +38,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+    
+    def generate_otp(self):
+        self.otp_code = str(random.randint(100000, 999999))
+        self.otp_expiry = timezone.now() + timedelta(minutes=5)
+        self.save()
+        return self.otp_code
+
+    def verify_otp(self, otp):
+        return self.otp_code == otp and self.otp_expiry and self.otp_expiry > timezone.now()
