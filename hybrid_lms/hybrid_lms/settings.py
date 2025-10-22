@@ -90,7 +90,7 @@ WSGI_APPLICATION = 'hybrid_lms.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'lms_hybrid',
+        'NAME': 'lms_users_db',
         'USER': 'root',
         'PASSWORD': 'Srujan@1403',
         'HOST': 'localhost',
@@ -159,7 +159,9 @@ REST_FRAMEWORK = {
     ),
 }
 
-AUTHENTICATION_BACKENDS = ['users.backends.EmailBackend']
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'users.backends.UserIDBackend',]
 
 from datetime import timedelta
 
@@ -168,3 +170,6 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer'),
 }
+
+FAST2SMS_API_KEY = 'CF8aYvyoKzA6UxfJueNbpGtLPrs319n0qlSk5dRiwWVcMO74gEgdNkDp7mOVRJ324hLPczFoBa1sKMnt'
+
